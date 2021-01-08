@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+
+    <title>nhận dạng biển số xe</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+
+            background-color: #fff;
+            background-size: cover;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .tieude {
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            width: 100%;
+            height: 60px;
+            border: 1px solid #ffff;
+            box-shadow: 0 0 50px 15px #3333331a;
+            display: flex;
+            justify-content: center;
+
+        }
+
+        .tieude label {
+            font-size: 40px;
+            font-family: cursive;
+        }
+
+        .container {
+            padding: 0;
+            margin: 0;
+            display: flex;
+            width: 100%;
+
+        }
+
+        .container-main {
+            margin: 0.5rem;
+            display: block;
+            width: 70%;
+            background-color: #fff;
+            border: 2px solid #dddddd;
+            border-left: 2px solid #dddddd;
+
+        }
+
+        .container-main img {
+            object-fit: cover;
+            width: 100%;
+            height: 650px;
+
+        }
+
+        .container-main h2 {
+            padding: 0;
+            margin: 0;
+            text-align: center;
+        }
+
+        .container-main form {
+            display: block;
+        }
+
+        .show-kq-main {
+            width: 30%;
+        }
+
+        .show-plate {
+            position: relative;
+            margin: 0.5rem 0.02rem;
+            border: 2px solid #dddddd;
+            display: block;
+            background-color: #fff;
+            box-shadow: 0 0 50px 15px #3333331a;
+            justify-content: center;
+            height: 200px;
+        }
+
+        .show-plate img {
+            max-width: 100%;
+            width: 369px;
+            height: 150px;
+        }
+
+        .show-plate label {
+            position: relative;
+            height: 13px;
+            top: -7px;
+            left: 20px;
+            background: #fff;
+            padding: 0 5px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+
+        .show-plate-char {
+            margin: 0.5rem 0.02rem;
+            border: 2px solid #dddddd;
+            display: block;
+            justify-content: center;
+            height: 200px;
+            background-color: #fff;
+            box-shadow: 0 0 50px 15px #3333331a;
+        }
+
+        .show-plate-char img {
+            width: 400px;
+            height: 157px;
+            object-fit: scale-down;
+        }
+
+        .show-plate-char label {
+            position: relative;
+            height: 13px;
+            top: -7px;
+            left: 20px;
+            background: #fff;
+            padding: 0 5px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .show-plate-train {
+            margin: 0.5rem 0.02rem;
+            border: 2px solid #dddddd;
+            display: block;
+            justify-content: center;
+            background-color: #fff;
+            box-shadow: 0 0 50px 15px #3333331a;
+            height: 200px;
+        }
+
+        .show-plate-train label {
+            position: relative;
+            height: 13px;
+            top: -7px;
+            left: 20px;
+            background: #fff;
+            padding: 0 5px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .form-main {
+            text-align: center;
+        }
+
+        .show-kq-bienso label {
+            display: flex;
+            justify-content: center;
+            font-size: 70px;
+            padding-top: 35px;
+        }
+
+        .custom-file-upload {
+            border: 1px solid #ccc;
+            display: inline-block;
+            padding: 6px 12px;
+            cursor: pointer;
+        }
+
+        button {
+
+            margin-top: 0.5rem;
+            width: 87px;
+            height: 30px;
+        }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="tieude">
+        <label>Nhận dạng biển số xe</label>
+    </div>
+    <div class="container">
+        <div class="container-main">
+
+            <h2>Ảnh tìm kiếm</h2>
+            <img id="output" style="display : none" />
+
+        </div>
+        <div class="show-kq-main">
+            <div class="show-plate">
+                <label>Biển số sau khi cắt</label>
+            </div>
+            <div class="show-plate-char">
+                <label for="">Ký tự sau khi cắt</label>
+            </div>
+            <div class="show-plate-train">
+                <label for="">Kết quả </label>
+            </div>
+            <div class="form-main">
+                <form method="POST" action="/nhandang/" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <label for="myFile" class="custom-file-upload">
+                        <i class="fa fa-cloud-upload"></i> Chọn ảnh
+                    </label>
+                    <input id="myFile" name="myfile" type="file" onchange="loadFile(event)" style="display:none;">
+
+                    <br>
+
+                    <button type="submit" id="sub">Tìm kiếm</button>
+
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
+    <script>
+        var loadFile = function (event) {
+            var image = document.getElementById('output');
+            image.setAttribute("style", "display : block")
+            image.src = URL.createObjectURL(event.target.files[0]);
+        };
+
+        $('#myFile').change(function () {
+            var i = $(this).prev('label').clone();
+            var file = $('#myFile')[0].files[0].name;
+            $(this).prev('label').text(file);
+        });
+
+        let btn = document.querySelector('#sub');
+        let rs = document.querySelector('.show-kq-main')
+        //let file = document.querySelector('#myFile')
+
+
+
+
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (document.querySelector('.show-bienso')) {
+                document.querySelector('.show-bienso').remove();
+            }
+            if (document.querySelector('.show-kytu')) {
+                document.querySelector('.show-kytu').remove();
+            }
+            if (document.querySelector('.show-kq-bienso')) {
+                document.querySelector('.show-kq-bienso').remove();
+            }
+            let file = $('#myFile')[0].files[0];
+            var formData = new FormData()
+            formData.append('files', file)
+            formData.append('csrfmiddlewaretoken', window.CSRF_TOKEN)
+            //console.log(file)
+            //console.log(formData)
+
+            $.ajax({
+                url: "{% url 'nhandang' %}",
+                type: 'POST',
+                dataType: 'json',
+                // data: formData,.
+                data: formData,
+                processData: false,
+                contentType: false,
+            }).done(function (ketqua) {
+                console.log(ketqua)
+                let show_bienso_main = document.createElement('div');
+                show_bienso_main.classList.add('show-bienso');
+                let show_bienso = document.createElement('img');
+                show_bienso.src = ketqua.anhbienso;
+                show_bienso_main.appendChild(show_bienso);
+                document.querySelector('.show-plate').appendChild(show_bienso_main);
+
+                let show_kytu_bienso_main = document.createElement('div');
+                show_kytu_bienso_main.classList.add('show-kytu');
+                let show_kytu_bienso = document.createElement('img');
+                show_kytu_bienso.src = ketqua.kytubien;
+                show_kytu_bienso_main.appendChild(show_kytu_bienso);
+                document.querySelector('.show-plate-char').appendChild(show_kytu_bienso_main)
+
+
+                let show_kq_bienso_main = document.createElement('div');
+                show_kq_bienso_main.classList.add('show-kq-bienso');
+                let show_kq_bienso = document.createElement('label');
+                show_kq_bienso.innerText = ketqua.bienso
+                show_kq_bienso_main.appendChild(show_kq_bienso);
+                document.querySelector('.show-plate-train').appendChild(show_kq_bienso_main)
+
+            });
+        })
+
+
+
+
+    </script>
+
+</body>
+
+</html>
